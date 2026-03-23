@@ -1,10 +1,28 @@
 import {useState} from "react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBolt, faBell, faAnglesUp} from '@fortawesome/free-solid-svg-icons'
+import { useNavigate } from "react-router-dom";
 
 
 const Landing = () => {
     const [cnpj, setCnpj] = useState("");
+    const navigate = useNavigate();
+
+    const [errormsg, setErrormsg] =useState(false);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const cnpjNumeros = cnpj.replace(/\D/g, "");
+
+        if (cnpjNumeros.length < 14){
+            setErrormsg(true);
+            return;
+        }
+
+        setErrormsg(false);
+        navigate(`/home/${cnpjNumeros}`);
+    };
 
     const formatCNPJ = (value) => {
         const numbers = value.replace(/\D/g, "").slice(0, 14);
@@ -46,7 +64,7 @@ const Landing = () => {
                 <h1 className="text-gray-600 text-md text-center px-[20%]">Obtenha um panorama completo das pendências e oportunidades tributárias do seu CNPJ de forma imediata e segura.</h1>
             </section>
 
-            <form className="w-full flex justify-center items-center mb-[8%]">
+            <form onSubmit={handleSubmit} className="w-full flex justify-center items-center mb-[8%]">
                 <div class="flex flex-col gap-4 w-full max-w-lg">
                     <div class="flex flex-col shadow-lg sm:flex-row gap-2 p-3 bg-slate-50 border border-slate-200 rounded-xl">
                     <div class="flex items-center flex-1 px-3 py-2 bg-white rounded-lg border border-slate-200 shadow-sm">
@@ -57,8 +75,10 @@ const Landing = () => {
                             onChange={handleChange}
                         />
                     </div>
-                        <button class="bg-[#1F3B61] text-white px-6 py-3 rounded-lg font-semibold text-sm hover:bg-opacity-95 transition-all whitespace-nowrap">Analisar gratuitamente</button>
+                        <button class="bg-[#1F3B61] cursor-pointer text-white px-6 py-3 rounded-lg font-semibold text-sm hover:bg-opacity-95 transition-all whitespace-nowrap">Analisar gratuitamente</button>
                     </div>
+                    {errormsg && (<p className="text-sm text-red-400 ml-4 font-semibold">CNPJ Inválido</p>)}
+                    
                 </div>
             </form >
 
